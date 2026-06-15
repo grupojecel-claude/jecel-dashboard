@@ -114,6 +114,7 @@ const progresoColor = D.progreso_pct < 40 ? '#f85149' : D.progreso_pct < 80 ? '#
     <div class="label">Ticket Promedio MTD</div>
     <div class="value" id="kpi-ticket"></div>
     <div class="sub" id="kpi-faltante"></div>
+    <div class="sub" id="kpi-ordenes-sub"></div>
   </div>
 </div>
 
@@ -126,7 +127,8 @@ document.getElementById('kpi-mtd-sub').textContent = `${D.mtd_ordenes} órdenes 
 document.getElementById('kpi-ytd').textContent = `$${fmt(D.ytd_total)}`;
 document.getElementById('kpi-ytd-sub').textContent = `${D.ytd_ordenes} órdenes en 2026`;
 document.getElementById('kpi-ticket').textContent = `$${fmt(D.ticket_promedio)}`;
-document.getElementById('kpi-faltante').innerHTML = `<span style="color:#f85149">Falta: $${fmt(D.faltante)}</span>`;
+document.getElementById('kpi-faltante').textContent = '';
+document.getElementById('kpi-ordenes-sub').textContent = `${D.mtd_ordenes} órdenes este mes`;
 </script>
 
 <!-- Charts Row -->
@@ -139,9 +141,7 @@ document.getElementById('kpi-faltante').innerHTML = `<span style="color:#f85149"
   </div>
   <div class="card">
     <h3>👥 Vendedores — Junio</h3>
-    <div class="chart-container" style="height:220px">
-      <canvas id="chartVend"></canvas>
-    </div>
+    <div id="vend-junio-list"></div>
   </div>
 </div>
 
@@ -173,25 +173,26 @@ new Chart(document.getElementById('chartMeses'), {
   }
 });
 
-// Chart: Vendedores dona
-new Chart(document.getElementById('chartVend'), {
-  type: 'doughnut',
-  data: {
-    labels: D.vend_labels,
-    datasets: [{
-      data: D.vend_vals,
-      backgroundColor: ['#1f6feb','#a371f7','#3fb950'],
-      borderColor: '#161b22',
-      borderWidth: 3
-    }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'bottom', labels: { color: '#8b949e', font: { size: 11 }, padding: 10 } },
-      tooltip: { callbacks: { label: ctx => `$${fmt(ctx.raw)} (${((ctx.raw/D.mtd_total)*100).toFixed(1)}%)` } }
-    }
-  }
+// Vendedores Junio — lista MTD
+const vendJunDiv = document.getElementById('vend-junio-list');
+D.top_vendedores.forEach((v, i) => {
+  const pct = (v.total / D.mtd_total * 100).toFixed(1);
+  const rankClass = i < 3 ? `rank-${i+1}` : '';
+  const rankStyle = i >= 3 ? 'background:#21262d;color:var(--muted)' : '';
+  vendJunDiv.innerHTML += `
+    <div class="vend-item">
+      <div style="display:flex;align-items:center">
+        <span class="rank ${rankClass}" style="${rankStyle}">${i+1}</span>
+        <div>
+          <div class="vend-name">${v.nombre.split(' ')[0]} ${v.nombre.split(' ')[1] || ''}</div>
+          <div style="font-size:0.72rem;color:var(--muted)">${v.ordenes} órdenes · ${pct}% del total MTD</div>
+        </div>
+      </div>
+      <div class="vend-meta">
+        <div class="vend-total">$${fmt(v.total)}</div>
+        <div style="font-size:0.72rem;color:var(--muted);text-align:right">${pct}%</div>
+      </div>
+    </div>`;
 });
 </script>
 
@@ -252,14 +253,8 @@ D.top_vend_ytd.forEach((v, i) => {
 
 <div class="footer">
   Actualizado: <strong>${D.update_ts}</strong> ·
-  <a href="https://grupojecel-claude.github.io/jecel-dashboard/" target="_blank">Ver dashboard público</a> ·
-  Grupo Jecel C.A. — Mayorista de Tecnología Venezuela
+  <a href="https://grupojecel-claude.github.io/jecel-dashboard/">Ver Dashboard</a>
 </div>
-
-<script>
-// Replace ${D.update_ts} in footer since it's in a template literal outside JS
-document.querySelector('.footer').innerHTML = document.querySelector('.footer').innerHTML.replace('${D.update_ts}', D.update_ts);
-</script>
 
 </body>
 </html>
