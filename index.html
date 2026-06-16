@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Ventas — Grupo Jecel C.A.</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --border: #21262d;
+  --text: #e6edf3;
+  --muted: #7d8590;
+  --accent: #4493f8;
+  --green: #3fb950;
+  --yellow: #d29922;
+  --red: #f85149;
+  --purple: #a371f7;
+  --orange: #fb8f44;
+  --blue2: #388bfd;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  padding: 20px 24px 32px;
+  font-size: 14px;
+}
+
+/* ── KPI CARDS ── */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.kpi {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px 16px;
+}
+.kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.kpi-pct-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.dot-red   { background: var(--red); }
+.dot-yellow{ background: var(--yellow); }
+.dot-green { background: var(--green); }
+.kpi-big {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+}
+.kpi-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.prog-bar {
+  background: rgba(255,255,255,0.07);
+  border-radius: 3px;
+  height: 5px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.prog-fill { height: 5px; border-radius: 3px; }
+.fill-red    { background: var(--red); }
+.fill-yellow { background: var(--yellow); }
+.fill-green  { background: var(--green); }
+
+/* ── MID ROW ── */
+.mid-row {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* ── BOTTOM ROW ── */
+.bot-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ── GENERIC CARD ── */
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+.panel-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── CHART ── */
+.chart-wrap { position: relative; height: 230px; }
+
+/* ── VENDEDORES MTD ── */
+.vend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(33,38,45,.8);
+}
+.vend-item:last-child { border-bottom: none; }
+.vend-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.rank-badge {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.r1 { background: rgba(255,215,0,.15); color: #ffd700; }
+.r2 { background: rgba(192,192,192,.15); color: #c0c0c0; }
+.r3 { background: rgba(205,127,50,.15); color: #cd7f32; }
+.rn { background: rgba(125,133,144,.15); color: var(--muted); }
+.vend-info { flex: 1; min-width: 0; }
+.vend-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vend-sub  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.vend-right { text-align: right; flex-shrink: 0; margin-left: 12px; }
+.vend-total { font-size: 14px; font-weight: 700; white-space: nowrap; }
+.vend-pct-txt { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.vend-bar-wrap { width: 100%; background: rgba(255,255,255,.06); border-radius: 2px; height: 3px; margin-top: 3px; }
+.vend-bar { height: 3px; border-radius: 2px; background: var(--accent); }
+
+/* ── TOP CLIENTES YTD ── */
+.cli-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(33,38,45,.8);
+}
+.cli-item:last-child { border-bottom: none; }
+.cli-rank {
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; flex-shrink: 0;
+}
+.cli-name-wrap { flex: 1; min-width: 0; }
+.cli-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cli-bar-outer { width: 180px; background: rgba(255,255,255,.06); border-radius: 2px; height: 4px; margin-top: 3px; flex-shrink: 0; }
+.cli-bar-inner { height: 4px; border-radius: 2px; background: var(--accent); }
+.cli-total { font-size: 12px; font-weight: 700; white-space: nowrap; flex-shrink: 0; min-width: 80px; text-align: right; }
+
+/* ── VENDEDORES YTD ── */
+.ytd-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(33,38,45,.8);
+}
+.ytd-item:last-child { border-bottom: none; }
+.ytd-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.ytd-info { flex: 1; min-width: 0; }
+.ytd-name { font-size: 13px; font-weight: 600; }
+.ytd-sub  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.ytd-right { text-align: right; flex-shrink: 0; margin-left: 12px; }
+.ytd-total { font-size: 14px; font-weight: 700; }
+.ytd-pct   { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.footer a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 900px) {
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .mid-row, .bot-row { grid-template-columns: 1fr; }
+  .cli-bar-outer { width: 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- KPI ROW -->
+<div class="kpi-row" id="kpi-row"></div>
+
+<!-- MID ROW: Gráfico meses + Vendedores MTD -->
+<div class="mid-row">
+  <div class="panel">
+    <div class="panel-title">📈 Ventas por Mes — 2026</div>
+    <div class="chart-wrap"><canvas id="chartMeses"></canvas></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">👥 Vendedores — Junio</div>
+    <div id="vend-mtd-list"></div>
+  </div>
+</div>
+
+<!-- BOTTOM ROW: Top 10 clientes YTD + Vendedores YTD -->
+<div class="bot-row">
+  <div class="panel">
+    <div class="panel-title">🏆 Top 10 Clientes — Acumulado 2026</div>
+    <div id="cli-ytd-list"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">⚡ Vendedores — Acumulado 2026</div>
+    <div id="vend-ytd-list"></div>
+  </div>
+</div>
+
+<div class="footer">
+  Actualización automática diaria · Grupo Jecel C.A. ·
+  <a href="https://grupojecel-claude.github.io/jecel-dashboard/" target="_blank">grupojecel-claude.github.io/jecel-dashboard</a>
+  · <span id="footer-fecha"></span>
+</div>
+
+<script>
+const D = {
+  mtd_total: 108993.97,
+  mtd_ordenes: 57,
+  ytd_total: 912191.96,
+  ytd_ordenes: 598,
+  progreso_pct: 36.3,
+  faltante: 191006.03,
+  ticket_promedio: 1912.17,
+  meses_labels: ["Ene","Feb","Mar","Abr","May","Jun"],
+  meses_vals: [156579.58, 110045.46, 231616.66, 146310.81, 158645.48, 108993.97],
+  top_vend_mtd: [
+    {nombre:"JORGE CORONADO",    total:71657.75,  n_ordenes:28, pct:65.7},
+    {nombre:"JONAS CORONADO",    total:27825.39,  n_ordenes:21, pct:25.5},
+    {nombre:"GUILLERMINA DELGADO",total:9416.33,  n_ordenes:7,  pct:8.6},
+    {nombre:"JECEL MIAMI",       total:94.5,      n_ordenes:1,  pct:0.1}
+  ],
+  top_vend_ytd: [
+    {nombre:"JORGE CORONADO",    total:633091.66, n_ordenes:334, pct:69.4},
+    {nombre:"JONAS CORONADO",    total:173770.87, n_ordenes:144, pct:19.0},
+    {nombre:"GUILLERMINA DELGADO",total:102262.73,n_ordenes:101, pct:11.2},
+    {nombre:"PAULA SANCHEZ",     total:2576.80,   n_ordenes:10,  pct:0.3},
+    {nombre:"JECEL MIAMI",       total:490.90,    n_ordenes:9,   pct:0.1}
+  ],
+  top_cli_ytd: [
+    {nombre:"SOLUCIONES INTEGRALES TECNOLOGICAS SOLITECH, C.A", total:53620.02},
+    {nombre:"DISTRICUEROS EL CANGURO CA",                        total:42873.00},
+    {nombre:"SMART FIX 168, C.A",                               total:40244.54},
+    {nombre:"DISTRIBUIDORA EMITECH, C.A",                        total:29485.00},
+    {nombre:"ALCAVE, CA",                                        total:29039.86},
+    {nombre:"AGUILA STORE 0408 C.A",                             total:27706.95},
+    {nombre:"DOCTOR CELULAR RECARGADO C.A",                      total:26706.04},
+    {nombre:"COMERCIAL AMANI C.A.",                              total:25141.10},
+    {nombre:"MULTIMAX STORE, C.A., Shady Duqqa",                total:24955.50},
+    {nombre:"TIENDAS CIRO S.A.",                                 total:24289.19}
+  ],
+  fecha_actualizacion: "16/06/2026 08:00"
+};
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function fmt(n, dec=2) {
+  return '$' + n.toLocaleString('de-DE', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+}
+function fmt0(n) { return '$' + Math.round(n).toLocaleString('de-DE'); }
+
+// ── KPI row ──────────────────────────────────────────────────────────────────
+const pct = D.progreso_pct;
+const semColor = pct >= 80 ? 'green' : pct >= 40 ? 'yellow' : 'red';
+const semDot   = `dot dot-${semColor}`;
+const fillCls  = `fill-${semColor}`;
+
+document.getElementById('kpi-row').innerHTML = `
+  <div class="kpi">
+    <div class="kpi-label">Meta Mensual</div>
+    <div class="kpi-pct-row">
+      <span class="${semDot}"></span>
+      <span class="kpi-big">${pct.toFixed(1).replace('.',',')}%</span>
+    </div>
+    <div class="kpi-sub">$300.000 meta · ${fmt(D.mtd_total)} alcanzado</div>
+    <div class="prog-bar"><div class="prog-fill ${fillCls}" style="width:${pct}%"></div></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Ventas MTD (Junio)</div>
+    <div class="kpi-big">${fmt(D.mtd_total)}</div>
+    <div class="kpi-sub">${D.mtd_ordenes} órdenes este mes</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Ventas YTD (2026)</div>
+    <div class="kpi-big">${fmt(D.ytd_total)}</div>
+    <div class="kpi-sub">${D.ytd_ordenes} órdenes en 2026</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Ticket Promedio MTD</div>
+    <div class="kpi-big">${fmt(D.ticket_promedio)}</div>
+    <div class="kpi-sub">${D.mtd_ordenes} órdenes este mes</div>
+  </div>
+`;
+
+// ── Chart meses ───────────────────────────────────────────────────────────────
+const currentMonthIdx = D.meses_labels.length - 1;
+new Chart(document.getElementById('chartMeses').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: D.meses_labels,
+    datasets: [{
+      data: D.meses_vals,
+      backgroundColor: D.meses_labels.map((_,i) => i === currentMonthIdx ? 'rgba(68,147,248,.55)' : 'rgba(56,139,253,.75)'),
+      borderColor:     D.meses_labels.map((_,i) => i === currentMonthIdx ? '#4493f8' : '#388bfd'),
+      borderWidth: 1,
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => fmt(ctx.raw) } }
+    },
+    scales: {
+      x: { grid: { color:'rgba(33,38,45,.7)' }, ticks: { color:'#7d8590', font:{size:12} } },
+      y: {
+        grid: { color:'rgba(33,38,45,.7)' },
+        ticks: { color:'#7d8590', font:{size:11}, callback: v => '$' + (v>=1000 ? (v/1000).toFixed(0)+'K' : v) }
+      }
+    }
+  }
+});
+
+// ── Vendedores MTD ────────────────────────────────────────────────────────────
+const rankCls = ['r1','r2','r3','rn','rn'];
+const rankLbl = ['1','2','3','4','5'];
+document.getElementById('vend-mtd-list').innerHTML = D.top_vend_mtd.map((v,i) => `
+  <div class="vend-item">
+    <div class="vend-left">
+      <div class="rank-badge ${rankCls[i]||'rn'}">${rankLbl[i]||i+1}</div>
+      <div class="vend-info">
+        <div class="vend-name">${v.nombre}</div>
+        <div class="vend-bar-wrap"><div class="vend-bar" style="width:${v.pct}%"></div></div>
+        <div class="vend-sub">${v.n_ordenes} órdenes · ${v.pct.toFixed(1).replace('.',',')}% del total MTD</div>
+      </div>
+    </div>
+    <div class="vend-right">
+      <div class="vend-total">${fmt(v.total)}</div>
+      <div class="vend-pct-txt">${v.pct.toFixed(1).replace('.',',')}%</div>
+    </div>
+  </div>
+`).join('');
+
+// ── Top 10 clientes YTD ───────────────────────────────────────────────────────
+const maxCli = D.top_cli_ytd[0]?.total || 1;
+document.getElementById('cli-ytd-list').innerHTML = D.top_cli_ytd.map((c,i) => `
+  <div class="cli-item">
+    <div class="cli-rank ${rankCls[i]||'rn'}" style="background:rgba(68,147,248,.12);color:var(--accent)">${i+1}</div>
+    <div class="cli-name-wrap">
+      <div class="cli-name">${c.nombre}</div>
+    </div>
+    <div class="cli-bar-outer"><div class="cli-bar-inner" style="width:${(c.total/maxCli*100).toFixed(0)}%"></div></div>
+    <div class="cli-total">${fmt(c.total)}</div>
+  </div>
+`).join('');
+
+// ── Vendedores YTD ────────────────────────────────────────────────────────────
+document.getElementById('vend-ytd-list').innerHTML = D.top_vend_ytd.map((v,i) => `
+  <div class="ytd-item">
+    <div class="ytd-left">
+      <div class="rank-badge ${rankCls[i]||'rn'}">${i+1}</div>
+      <div class="ytd-info">
+        <div class="ytd-name">${v.nombre}</div>
+        <div class="vend-bar-wrap"><div class="vend-bar" style="width:${v.pct}%"></div></div>
+        <div class="ytd-sub">${v.n_ordenes} órdenes · ${v.pct.toFixed(1).replace('.',',')}% del total YTD</div>
+      </div>
+    </div>
+    <div class="ytd-right">
+      <div class="ytd-total">${fmt(v.total)}</div>
+      <div class="ytd-pct">${v.pct.toFixed(1).replace('.',',')}%</div>
+    </div>
+  </div>
+`).join('');
+
+document.getElementById('footer-fecha').textContent = 'Actualizado: ' + D.fecha_actualizacion;
+</script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
