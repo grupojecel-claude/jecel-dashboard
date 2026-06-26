@@ -27,36 +27,24 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;font-size:14px}
-
-/* ── Header ── */
 .header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .header-left{display:flex;align-items:center;gap:14px}
 .header h1{font-size:1.15rem;font-weight:700;color:var(--text);letter-spacing:-.01em}
 .header-sub{font-size:.72rem;color:var(--text2);margin-top:2px}
 .meta-badge{background:#1a3a5c;border:1px solid var(--accent);color:var(--accent);border-radius:20px;padding:5px 14px;font-size:.75rem;font-weight:600;white-space:nowrap}
-
-/* ── Layout ── */
 .container{max-width:1500px;margin:0 auto;padding:20px}
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
 .grid-mid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:16px}
-.grid-bot{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-
-/* ── Cards ── */
+.grid-bot{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px}
 .section-title{font-size:.72rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:6px}
-
-/* ── KPI ── */
 .kpi-label{font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
 .kpi-icon{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
 .kpi-value{font-size:1.65rem;font-weight:700;line-height:1.1;margin-bottom:2px}
 .kpi-sub{font-size:.72rem;color:var(--text2);margin-top:4px}
 .progress-wrap{background:var(--surface3);border-radius:20px;height:6px;margin-top:10px;overflow:hidden}
 .progress-fill{height:100%;border-radius:20px}
-
-/* ── Chart ── */
 .chart-wrap{position:relative;height:260px}
-
-/* ── Vendor ranking (MTD & YTD) ── */
 .vend-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
 .vend-item:last-child{border-bottom:none}
 .vend-rank{width:26px;height:26px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px}
@@ -68,15 +56,17 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .vend-pct-label{font-size:.72rem;color:var(--text2);margin-top:2px}
 .vend-bar-wrap{background:var(--surface3);border-radius:3px;height:3px;margin-top:5px;overflow:hidden}
 .vend-bar-fill{height:100%;border-radius:3px}
-
-/* ── Client list ── */
 .client-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .client-rank{font-size:.72rem;font-weight:700;color:var(--text2);width:18px;flex-shrink:0;text-align:right}
 .client-name{font-size:.78rem;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .client-bar-wrap{width:160px;background:var(--surface3);border-radius:3px;height:8px;flex-shrink:0;overflow:hidden}
 .client-bar-fill{height:100%;background:var(--accent);border-radius:3px}
 .client-amount{font-size:.78rem;font-weight:600;color:var(--text);white-space:nowrap;text-align:right;min-width:80px}
-
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{color:var(--text2);font-weight:600;text-transform:uppercase;font-size:.66rem;letter-spacing:.05em;padding:8px 6px;border-bottom:1px solid var(--border);text-align:left}
+td{padding:8px 6px;border-bottom:1px solid var(--surface3)}
+tr:last-child td{border-bottom:none}
+@media(max-width:1200px){.grid-bot{grid-template-columns:1fr 1fr}}
 @media(max-width:1100px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-mid,.grid-bot{grid-template-columns:1fr}}
 </style>
 </head>
@@ -85,4 +75,343 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 <!-- ══ HEADER ══ -->
 <div class="header">
   <div class="header-left">
-    <img src="data:image/png;base64,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
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" id="jecel-logo-placeholder">
+      <rect width="44" height="44" rx="8" fill="#1a3a5c"/>
+      <text x="22" y="29" font-family="-apple-system,sans-serif" font-size="14" font-weight="800" fill="#3b82f6" text-anchor="middle">JCL</text>
+    </svg>
+    <div>
+      <h1>Dashboard de Ventas — Grupo Jecel C.A.</h1>
+      <div class="header-sub">Actualizado: 26/06/2026 08:00 · 638 órdenes YTD</div>
+    </div>
+  </div>
+  <div class="meta-badge">Meta: $300,000 / mes</div>
+</div>
+
+<div class="container">
+
+  <!-- KPIs -->
+  <div class="grid-4">
+    <div class="card">
+      <div class="kpi-label"><span class="kpi-icon" style="background:var(--accent)"></span>Ventas MTD (Junio)</div>
+      <div class="kpi-value" style="color:var(--accent)">$164,158.39</div>
+      <div class="kpi-sub">97 órdenes este mes</div>
+      <div class="progress-wrap"><div class="progress-fill" style="width:54.7%;background:#3b82f6"></div></div>
+      <div class="kpi-sub" style="margin-top:6px">54.7% de la meta mensual</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label"><span class="kpi-icon" style="background:var(--green)"></span>Meta Restante</div>
+      <div class="kpi-value" style="color:var(--yellow)">$135,841.61</div>
+      <div class="kpi-sub">Para alcanzar $300,000</div>
+      <div class="kpi-sub" style="margin-top:8px;color:var(--green)">+3.5% vs mes anterior ($158,645.48)</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label"><span class="kpi-icon" style="background:var(--purple)"></span>YTD 2026</div>
+      <div class="kpi-value" style="color:var(--purple)">$967,356.38</div>
+      <div class="kpi-sub">638 órdenes en el año</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label"><span class="kpi-icon" style="background:var(--yellow)"></span>Ticket Promedio MTD</div>
+      <div class="kpi-value" style="color:var(--yellow)">$1,692.35</div>
+      <div class="kpi-sub">Promedio por orden en Junio</div>
+    </div>
+  </div>
+
+  <!-- Chart + Vendors -->
+  <div class="grid-mid">
+    <div class="card">
+      <div class="section-title">📊 Ventas Mensuales 2026</div>
+      <div class="chart-wrap"><canvas id="chartMensual"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="section-title">🏆 Vendedores — Junio</div>
+      
+  <div class="vend-item">
+    <div class="vend-rank" style="color:#3b82f6">1</div>
+    <div class="vend-body">
+      <div class="vend-name">JORGE CORONADO</div>
+      <div class="vend-meta">54 órdenes · 70.8% del mes</div>
+      <div class="vend-bar-wrap"><div class="vend-bar-fill" style="width:100.0%;background:#3b82f6"></div></div>
+    </div>
+    <div class="vend-right">
+      <div class="vend-amount" style="color:#3b82f6">$116,232.09</div>
+    </div>
+  </div>
+  <div class="vend-item">
+    <div class="vend-rank" style="color:#3fb950">2</div>
+    <div class="vend-body">
+      <div class="vend-name">JONAS CORONADO</div>
+      <div class="vend-meta">26 órdenes · 20.5% del mes</div>
+      <div class="vend-bar-wrap"><div class="vend-bar-fill" style="width:29.0%;background:#3fb950"></div></div>
+    </div>
+    <div class="vend-right">
+      <div class="vend-amount" style="color:#3fb950">$33,649.44</div>
+    </div>
+  </div>
+  <div class="vend-item">
+    <div class="vend-rank" style="color:#d29922">3</div>
+    <div class="vend-body">
+      <div class="vend-name">GUILLERMINA DELGADO</div>
+      <div class="vend-meta">16 órdenes · 8.6% del mes</div>
+      <div class="vend-bar-wrap"><div class="vend-bar-fill" style="width:12.2%;background:#d29922"></div></div>
+    </div>
+    <div class="vend-right">
+      <div class="vend-amount" style="color:#d29922">$14,182.36</div>
+    </div>
+  </div>
+  <div class="vend-item">
+    <div class="vend-rank" style="color:#bc8cff">4</div>
+    <div class="vend-body">
+      <div class="vend-name">JECEL MIAMI</div>
+      <div class="vend-meta">1 órdenes · 0.1% del mes</div>
+      <div class="vend-bar-wrap"><div class="vend-bar-fill" style="width:0.1%;background:#bc8cff"></div></div>
+    </div>
+    <div class="vend-right">
+      <div class="vend-amount" style="color:#bc8cff">$94.50</div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <!-- Clients + YTD vendors -->
+  <div class="grid-bot">
+    <div class="card">
+      <div class="section-title">👥 Top Clientes — Junio</div>
+      
+  <div class="client-row">
+    <span class="client-rank">1</span>
+    <span class="client-name" title="STARMOVILES TELECOM SERVICE, C.A">STARMOVILES TELECOM SERVICE, C.A</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:100.0%"></div></div>
+    <span class="client-amount">$23,553.15</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">2</span>
+    <span class="client-name" title="MULTIMAX STORE, C.A., Shady Duqqa">MULTIMAX STORE, C.A., Shady Duqqa</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:70.6%"></div></div>
+    <span class="client-amount">$16,638.00</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">3</span>
+    <span class="client-name" title="ALCAVE, CA">ALCAVE, CA</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:66.2%"></div></div>
+    <span class="client-amount">$15,582.40</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">4</span>
+    <span class="client-name" title="DOCTOR CELULAR RECARGADO C.A">DOCTOR CELULAR RECARGADO C.A</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:39.6%"></div></div>
+    <span class="client-amount">$9,332.39</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">5</span>
+    <span class="client-name" title="SMART FIX 168, C.A">SMART FIX 168, C.A</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:31.4%"></div></div>
+    <span class="client-amount">$7,390.56</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">6</span>
+    <span class="client-name" title="JX CELULAR, C.A">JX CELULAR, C.A</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:26.0%"></div></div>
+    <span class="client-amount">$6,133.46</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">7</span>
+    <span class="client-name" title="TIENDAS CIRO S.A.">TIENDAS CIRO S.A.</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:22.0%"></div></div>
+    <span class="client-amount">$5,174.00</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">8</span>
+    <span class="client-name" title="AGUILA STORE 0408 C.A">AGUILA STORE 0408 C.A</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:17.8%"></div></div>
+    <span class="client-amount">$4,189.71</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">9</span>
+    <span class="client-name" title="COMERCIAL AMANI C.A.">COMERCIAL AMANI C.A.</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:16.7%"></div></div>
+    <span class="client-amount">$3,938.67</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">10</span>
+    <span class="client-name" title="H & SHOP, C.A.">H & SHOP, C.A.</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:15.9%"></div></div>
+    <span class="client-amount">$3,750.02</span>
+  </div>
+    </div>
+    <div class="card">
+      <div class="section-title">🌟 Top Clientes — Acumulado 2026</div>
+      
+  <div class="client-row">
+    <span class="client-rank">1</span>
+    <span class="client-name" title="SOLUCIONES INTEGRALES TECNOLOGICAS SOLITECH, C.A">SOLITECH, C.A</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:100.0%;background:var(--purple)"></div></div>
+    <span class="client-amount">$56,467.07</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">2</span>
+    <span class="client-name" title="DISTRICUEROS EL CANGURO CA">DISTRICUEROS EL CANGURO</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:77.5%;background:var(--purple)"></div></div>
+    <span class="client-amount">$43,789.00</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">3</span>
+    <span class="client-name" title="SMART FIX 168, C.A">SMART FIX 168, C.A</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:71.3%;background:var(--purple)"></div></div>
+    <span class="client-amount">$40,244.54</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">4</span>
+    <span class="client-name" title="DOCTOR CELULAR RECARGADO C.A">DOCTOR CELULAR RECARGADO</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:57.1%;background:var(--purple)"></div></div>
+    <span class="client-amount">$32,256.88</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">5</span>
+    <span class="client-name" title="ALCAVE, CA">ALCAVE, CA</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:53.1%;background:var(--purple)"></div></div>
+    <span class="client-amount">$29,989.86</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">6</span>
+    <span class="client-name" title="DISTRIBUIDORA EMITECH, C.A">DISTRIBUIDORA EMITECH</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:52.2%;background:var(--purple)"></div></div>
+    <span class="client-amount">$29,485.00</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">7</span>
+    <span class="client-name" title="AGUILA STORE 0408 C.A">AGUILA STORE 0408</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:49.1%;background:var(--purple)"></div></div>
+    <span class="client-amount">$27,706.95</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">8</span>
+    <span class="client-name" title="COMERCIAL AMANI C.A.">COMERCIAL AMANI C.A.</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:44.5%;background:var(--purple)"></div></div>
+    <span class="client-amount">$25,141.10</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">9</span>
+    <span class="client-name" title="MULTIMAX STORE, C.A., Shady Duqqa">MULTIMAX STORE, C.A.</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:44.2%;background:var(--purple)"></div></div>
+    <span class="client-amount">$24,955.50</span>
+  </div>
+  <div class="client-row">
+    <span class="client-rank">10</span>
+    <span class="client-name" title="KALOO ELECTRONICS, C.A.">KALOO ELECTRONICS</span>
+    <div class="client-bar-wrap"><div class="client-bar-fill" style="width:43.6%;background:var(--purple)"></div></div>
+    <span class="client-amount">$24,611.77</span>
+  </div>
+    </div>
+    <div class="card">
+      <div class="section-title">🥇 Vendedores — Acumulado 2026</div>
+      
+  <div class="vend-item">
+    <div class="vend-rank" style="color:#3b82f6">1</div>
+    <div class="vend-body">
+      <div class="vend-name">JORGE CORONADO</div>
+      <div class="vend-meta">362 órdenes · 70.1% del año</div>
+      <div class="vend-bar-wrap"><div class="vend-bar-fill" style="width:100.0%;background:#3b82f6"></div></div>
+    </div>
+    <div class="vend-right">
+      <div class="vend-amount" style="color:#3b82f6">$677,666.00</div>
+      <div class="vend-pct-label">70.1%</div>
+    </div>
+  </div>
+  <div class="vend-item">
+    <div class="vend-rank" style="color:#3fb950">2</div>
+    <div class="vend-body">
+      <div class="vend-name">JONAS CORONADO</div>
+      <div class="vend-meta">154 órdenes · 18.6% del año</div>
+      <div class="vend-bar-wrap"><div class="vend-bar-fill" style="width:26.5%;background:#3fb950"></div></div>
+    </div>
+    <div class="vend-right">
+      <div class="vend-amount" style="color:#3fb950">$179,594.92</div>
+      <div class="vend-pct-label">18.6%</div>
+    </div>
+  </div>
+  <div class="vend-item">
+    <div class="vend-rank" style="color:#d29922">3</div>
+    <div class="vend-body">
+      <div class="vend-name">GUILLERMINA DELGADO</div>
+      <div class="vend-meta">110 órdenes · 11.1% del año</div>
+      <div class="vend-bar-wrap"><div class="vend-bar-fill" style="width:15.8%;background:#d29922"></div></div>
+    </div>
+    <div class="vend-right">
+      <div class="vend-amount" style="color:#d29922">$107,028.76</div>
+      <div class="vend-pct-label">11.1%</div>
+    </div>
+  </div>
+  <div class="vend-item">
+    <div class="vend-rank" style="color:#8b949e">4</div>
+    <div class="vend-body">
+      <div class="vend-name">PAULA SANCHEZ</div>
+      <div class="vend-meta">10 órdenes · 0.3% del año</div>
+      <div class="vend-bar-wrap"><div class="vend-bar-fill" style="width:0.4%;background:#8b949e"></div></div>
+    </div>
+    <div class="vend-right">
+      <div class="vend-amount" style="color:#8b949e">$2,576.80</div>
+      <div class="vend-pct-label">0.3%</div>
+    </div>
+  </div>
+  <div class="vend-item">
+    <div class="vend-rank" style="color:#8b949e">5</div>
+    <div class="vend-body">
+      <div class="vend-name">OTROS</div>
+      <div class="vend-meta">LILIANA GONZALEZ + JECEL MIAMI</div>
+      <div class="vend-bar-wrap"><div class="vend-bar-fill" style="width:0.1%;background:#8b949e"></div></div>
+    </div>
+    <div class="vend-right">
+      <div class="vend-amount" style="color:#8b949e">$489.90</div>
+      <div class="vend-pct-label">0.1%</div>
+    </div>
+  </div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+    <div style="font-size:.7rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Total YTD 2026</div>
+    <div style="font-size:1.35rem;font-weight:700;color:var(--purple)">$967,356.38</div>
+    <div style="font-size:.72rem;color:var(--text2);margin-top:3px">638 órdenes · Ene–Jun 2026</div>
+  </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const chartData = {
+  labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+  values: [156579.58, 110045.46, 231616.66, 146310.81, 158645.48, 164158.39],
+  orders: [92, 102, 141, 94, 112, 97]
+};
+const ctx = document.getElementById('chartMensual').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: chartData.labels,
+    datasets: [{
+      label: 'Ventas USD',
+      data: chartData.values,
+      backgroundColor: chartData.values.map((v,i) => i === chartData.values.length-1 ? 'rgba(59,130,246,0.85)' : 'rgba(59,130,246,0.4)'),
+      borderColor: chartData.values.map((v,i) => i === chartData.values.length-1 ? '#3b82f6' : 'rgba(59,130,246,0.6)'),
+      borderWidth: 1,
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => '$' + ctx.raw.toLocaleString('en-US', {minimumFractionDigits:2}) + ' (' + chartData.orders[ctx.dataIndex] + ' órdenes)'
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: '#21262d' }, ticks: { color: '#8b949e' } },
+      y: { grid: { color: '#21262d' }, ticks: { color: '#8b949e', callback: v => '$' + (v/1000).toFixed(0)+'k' } }
+    }
+  }
+});
+</script>
+</body>
+</html>
